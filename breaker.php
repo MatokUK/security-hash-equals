@@ -1,23 +1,26 @@
 <?php
+error_reporting(0);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 
-function timeGuess()
+
+class Stats
 {
-    $char = 'a';
-    $total = 0;
-    $count = 0;
+    private $data;
 
-    do {
-        for ($i = 0; $i < 99; $i++) {
-            $arg = str_repeat($char, 5);
-            $time = runAndMeasure($arg);
-            $count++;
-            $total += $time;
-        }
-        $char++;
-    } while($char != 'z');
+    public function collect($arg, $time)
+    {
+        $this->data[$arg] = $time;
+    }
 
-    return $total / $count;
+    public function getResult()
+    {
+        echo 'top candidates:'."\n";
+        arsort($this->data);
+        var_dump($this->data);
+    }
 }
+
 
 function runAndMeasure($arg)
 {
@@ -27,25 +30,36 @@ function runAndMeasure($arg)
     return $end - $start;
 }
 
-function correctGuess()
+function measure($arg)
 {
-    $total = 0;
-    $count = 0;
+    $minTime = 10;
 
-    for ($i = 0; $i < 99; $i++) {
-        $arg = 'mw3bq';
+    for ($i = 0; $i < 1500; $i++) {
+        //usleep(8);
         $time = runAndMeasure($arg);
-        $count++;
-        $total += $time;
+        if ($time < $minTime) {
+            $minTime = $time;
+        }
     }
 
-    return $total / $count;
+    return $minTime;
 }
 
-$failTime = timeGuess();
-var_dump($failTime);
 
-$goodTime = timeGuess();
-var_dump($goodTime);
+function bruteforce() {
+    $lines = array('aaaaa', 'aaaab', 'aaaac', 'mw3bq', 'zzzzy', 'zzzzz');
 
-//var_dump($output, $end-$start);
+    foreach  ($lines as $line) {
+        yield $line;
+    }
+}
+
+
+$stat = new Stats();
+
+foreach (bruteforce() as $arg) {
+    $time = measure($arg);
+    $stat->collect($arg, $time);
+}
+
+$stat->getResult();
