@@ -25,7 +25,7 @@ class Stats
 function runAndMeasure($arg)
 {
     $start = microtime(true);
-    exec('php compare.php '.$arg);
+    exec('php exception.php '.$arg.' password');
     $end = microtime(true);
     return $end - $start;
 }
@@ -47,7 +47,7 @@ function measure($arg)
 
 
 function bruteforce() {
-    $lines = array('aaaaa', 'aaaab', 'aaaac', 'mw3bq', 'zzzzy', 'zzzzz');
+    $lines = array('martin', 'admin', 'jan', 'patrik', 'matok', 'root');
 
     foreach  ($lines as $line) {
         yield $line;
@@ -55,14 +55,6 @@ function bruteforce() {
 }
 
 
-function bruteforce2() {
-    $arg = 'aa';
-
-    do {
-        yield $arg;
-        $arg ++;
-    } while ($arg != 'zz');
-}
 
 
 $stat = new Stats();
